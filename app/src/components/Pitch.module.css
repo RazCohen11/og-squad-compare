@@ -1,0 +1,114 @@
+/* The pitch keeps a 68:100 ratio and is sized by its parent (see GameScreen .pitchArea) */
+.pitch {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 68 / 100;
+  container-type: inline-size;
+  border-radius: 8px;
+  overflow: hidden;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--pitch-a) 0,
+    var(--pitch-a) 10%,
+    var(--pitch-b) 10%,
+    var(--pitch-b) 20%
+  );
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+}
+
+.markings > * {
+  position: absolute;
+  border: 2px solid var(--pitch-line);
+}
+
+.outline {
+  inset: 3%;
+}
+
+.halfway {
+  left: 3%;
+  right: 3%;
+  top: 50%;
+  height: 0;
+  border-width: 2px 0 0;
+}
+
+.centreCircle {
+  left: 50%;
+  top: 50%;
+  width: 26%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.centreSpot {
+  left: 50%;
+  top: 50%;
+  width: 1.4%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--pitch-line);
+  transform: translate(-50%, -50%);
+}
+
+.penaltyBox {
+  left: 20%;
+  width: 60%;
+  height: 15%;
+}
+
+.goalBox {
+  left: 36%;
+  width: 28%;
+  height: 5.5%;
+}
+
+.penaltyBox.top,
+.goalBox.top {
+  top: 3%;
+  border-top-width: 0;
+}
+
+.penaltyBox.bottom,
+.goalBox.bottom {
+  bottom: 3%;
+  border-bottom-width: 0;
+}
+
+.slots {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Card-shaped placeholder, centred on its slot position */
+.slot {
+  position: absolute;
+  width: 17%;
+  aspect-ratio: 3 / 4;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(255, 255, 255, 0.7);
+  border-radius: 8%;
+  background: rgba(20, 70, 40, 0.92);
+}
+
+.slotCode {
+  font-size: max(0.65rem, 3.6cqw);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.current {
+  border: 3px solid var(--accent);
+  background: rgba(242, 193, 78, 0.22);
+  box-shadow: 0 0 0 4px rgba(242, 193, 78, 0.25), 0 0 18px rgba(242, 193, 78, 0.55);
+}
+
+.current .slotCode {
+  color: #fff;
+}

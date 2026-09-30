@@ -1,0 +1,152 @@
+.picker {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trigger {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    'label chevron'
+    'value chevron'
+    'league chevron';
+  align-items: center;
+  width: 100%;
+  min-height: 3.5rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: left;
+}
+
+.trigger[aria-expanded='true'] {
+  border-color: var(--accent);
+}
+
+.triggerLabel {
+  grid-area: label;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.triggerValue {
+  grid-area: value;
+  font-size: 1.05rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hasValue .triggerValue {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.triggerLeague {
+  grid-area: league;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.chevron {
+  grid-area: chevron;
+  padding-left: 0.75rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.search {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: calc(var(--radius) - 2px);
+  background: var(--bg);
+}
+
+.list {
+  max-height: min(22rem, 50dvh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.group + .group {
+  margin-top: 0.5rem;
+}
+
+.groupTitle {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0.35rem 0.5rem;
+  background: var(--surface);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.options {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  text-align: left;
+}
+
+.option:hover:not(:disabled) {
+  background: var(--surface-2);
+}
+
+.option[aria-pressed='true'] {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+
+.option:disabled {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+.takenNote {
+  margin-left: auto;
+  font-size: 0.75rem;
+}
+
+.check {
+  margin-left: auto;
+  color: var(--accent);
+}
+
+.empty {
+  padding: 0.75rem 0.5rem;
+  color: var(--muted);
+}

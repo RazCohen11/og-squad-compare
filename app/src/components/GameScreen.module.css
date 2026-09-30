@@ -1,0 +1,192 @@
+/* The game screen fills exactly one viewport: header, pitch (flexible) and guess area */
+.screen {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: max(0.5rem, env(safe-area-inset-top)) 0.75rem max(0.75rem, env(safe-area-inset-bottom));
+  gap: 0.5rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.back {
+  flex: none;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+
+.titles {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.version {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.matchup {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  min-width: 0;
+  font-size: 1rem;
+  line-height: 1.25;
+}
+
+.teamName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vs {
+  flex: none;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Size container: the pitch takes the largest 68:100 box that fits */
+.pitchArea {
+  flex: 1;
+  min-height: 0;
+  container-type: size;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pitchFrame {
+  width: min(100cqw, 68cqh);
+}
+
+.guessArea {
+  flex: none;
+  height: 10.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.round {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.roundLabel {
+  color: var(--muted);
+}
+
+.roundValue {
+  font-weight: 700;
+}
+
+.roundSlot {
+  margin-left: 0.35rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.cards {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.cardPlaceholder {
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.4rem;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+
+.cardTeam {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.cardHint {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* Desktop: pitch on the left, guess area on the right */
+@media (min-width: 52rem) {
+  .screen {
+    padding: 1rem 1.5rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .matchup {
+    font-size: 1.25rem;
+  }
+
+  /* Keep header and board together on wide screens */
+  .header,
+  .body {
+    width: 100%;
+    max-width: 62rem;
+    margin-inline: auto;
+  }
+
+  .body {
+    flex-direction: row;
+    gap: 2rem;
+  }
+
+  .guessArea {
+    width: 22rem;
+    height: auto;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  .cards {
+    flex: none;
+    height: 15rem;
+  }
+}
