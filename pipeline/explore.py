@@ -554,7 +554,7 @@ def main() -> None:
         if MANUAL_MARKER in existing:
             manual = existing[existing.index(MANUAL_MARKER):]
     REPORT.parent.mkdir(parents=True, exist_ok=True)
-    REPORT.write_text("\n".join(out) + "\n" + manual, encoding="utf-8")
+    REPORT.write_text("\n".join(out) + "\n" + manual, encoding="utf-8", newline="\n")
     print(f"Wrote {REPORT.relative_to(ROOT)}")
 
 
