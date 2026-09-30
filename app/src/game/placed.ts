@@ -8,7 +8,7 @@ export interface PlacedCard {
   player: XiPlayer
   side: Side
   tie: boolean
-  teamName: string
+  team: GameSide
 }
 
 export function placedCards(state: GameState, sideA: GameSide, sideB: GameSide): PlacedCard[] {
@@ -20,7 +20,7 @@ export function placedCards(state: GameState, sideA: GameSide, sideB: GameSide):
       player: result.winner === 'A' ? round.a : round.b,
       side: result.winner,
       tie: result.tie,
-      teamName: (result.winner === 'A' ? sideA : sideB).team.name,
+      team: result.winner === 'A' ? sideA : sideB,
     }
   })
 }

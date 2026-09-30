@@ -11,38 +11,50 @@ interface Props {
   result: RoundResult | null
   sideA: GameSide
   sideB: GameSide
+  // Phones: the panel is collapsed so the pitch is visible
+  peek: boolean
+  // The winner card is flying to its slot: the panel steps aside
+  flying: boolean
   onGuess: (guess: Guess) => void
   onNext: () => void
+  onTogglePeek: () => void
 }
 
-// On phones an overlay over the dimmed pitch, on desktop a panel next to it (D35)
-export function GuessPanel({ round, roundNumber, isLastRound, result, sideA, sideB, onGuess, onNext }: Props) {
+// On phones an overlay over the dimmed pitch, on desktop a panel next to it (D35).
+// Mounted once per round (keyed by the parent), so the cards flip in place on reveal.
+export function GuessPanel(props: Props) {
+  const { round, roundNumber, isLastRound, result, sideA, sideB, peek, flying, onGuess, onNext, onTogglePeek } = props
   const revealed = result !== null
   const cardState = revealed ? 'revealed' : 'hidden'
+  const classes = [styles.overlay, peek ? styles.peek : '', flying ? styles.flying : ''].join(' ')
 
   return (
-    <section className={styles.overlay} aria-label={`Round ${roundNumber}, slot ${round.slot}`}>
-      <div className={styles.panel}>
-        <p className={styles.question}>
-          <span className={styles.slot}>{round.slot}</span>
-          {revealed ? <ResultLine result={result} round={round} sideA={sideA} sideB={sideB} /> : 'Who had the higher rating?'}
-        </p>
+    <section className={classes} aria-label={`Round ${roundNumber}, slot ${round.slot}`} inert={flying}>
+      <div className={styles.panel} inert={peek}>
+        <div className={styles.questionRow}>
+          <p className={styles.question}>
+            <span className={styles.slot}>{round.slot}</span>
+            {revealed ? <ResultLine result={result} round={round} sideA={sideA} sideB={sideB} /> : 'Who had the higher rating?'}
+          </p>
+          <button type="button" className={styles.peekButton} onClick={onTogglePeek} aria-expanded={!peek}>
+            <PitchIcon />
+            <span>Pitch</span>
+          </button>
+        </div>
 
         <div className={styles.cards}>
           <PlayerCard
-            key={`a-${roundNumber}-${cardState}`}
-            player={round.a}
-            side={sideA}
             state={cardState}
+            player={round.a}
+            team={sideA}
             result={result ?? undefined}
             onGuess={() => onGuess('A')}
             shortcut="← 1"
           />
           <PlayerCard
-            key={`b-${roundNumber}-${cardState}`}
-            player={round.b}
-            side={sideB}
             state={cardState}
+            player={round.b}
+            team={sideB}
             result={result ?? undefined}
             onGuess={() => onGuess('B')}
             shortcut="→ 2"
@@ -62,7 +74,24 @@ export function GuessPanel({ round, roundNumber, isLastRound, result, sideA, sid
           </button>
         )}
       </div>
+
+      {/* Phones only: brings the collapsed panel back */}
+      {peek && (
+        <button type="button" className={styles.showCards} onClick={onTogglePeek} autoFocus>
+          <span aria-hidden="true">▲</span> Show cards
+        </button>
+      )}
     </section>
+  )
+}
+
+function PitchIcon() {
+  return (
+    <svg className={styles.icon} viewBox="0 0 16 20" aria-hidden="true">
+      <rect x="1" y="1" width="14" height="18" rx="1.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+      <line x1="1" y1="10" x2="15" y2="10" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="8" cy="10" r="2.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
   )
 }
 

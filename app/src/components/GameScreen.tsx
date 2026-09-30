@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import {
   createGame,
   currentResult,
@@ -12,6 +12,8 @@ import {
 import { placedCards } from '../game/placed'
 import type { GameSide } from '../game/sides'
 import { ROUND_COUNT } from '../game/slots'
+import { flyInto } from '../lib/motion'
+import { ConfirmDialog } from './ConfirmDialog'
 import { EndScreen } from './EndScreen'
 import { GameHeader } from './GameHeader'
 import styles from './GameScreen.module.css'
@@ -38,29 +40,57 @@ const KEY_TO_GUESS: Record<string, Guess> = {
 
 export function GameScreen({ sideA, sideB, onBack, onNewTeams }: Props) {
   const [state, dispatch] = useReducer(gameReducer, null, () => createGame(sideA.team.xi, sideB.team.xi))
+  const [flying, setFlying] = useState(false)
+  const [peek, setPeek] = useState(false)
+  const [confirmingBack, setConfirmingBack] = useState(false)
+  const boardRef = useRef<HTMLElement>(null)
   const phase = state.phase
+
+  const guess = useCallback((g: Guess) => {
+    setPeek(false)
+    dispatch({ type: 'guess', guess: g })
+  }, [])
+
+  // Next: the winner card flies into its slot, then the next round starts (D36)
+  const next = useCallback(() => {
+    if (flying || state.phase !== 'revealed') return
+    const result = currentResult(state)
+    const board = boardRef.current
+    const source = board?.querySelector<HTMLElement>(`[data-card-side="${result?.winner}"] [data-face="back"]`)
+    const target = board?.querySelector<HTMLElement>(`[data-slot="${result?.slot}"]`)
+    setPeek(false)
+    if (!source || !target) {
+      dispatch({ type: 'next' })
+      return
+    }
+    setFlying(true)
+    void flyInto(source, target).then(() => {
+      dispatch({ type: 'next' })
+      setFlying(false)
+    })
+  }, [flying, state])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.altKey || e.ctrlKey || e.metaKey) return
+      if (e.altKey || e.ctrlKey || e.metaKey || flying || confirmingBack) return
       const tag = (e.target as HTMLElement | null)?.tagName
       if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return
       if (phase === 'guessing') {
-        const guess = KEY_TO_GUESS[e.key]
-        if (guess) {
+        const g = KEY_TO_GUESS[e.key]
+        if (g) {
           e.preventDefault()
-          dispatch({ type: 'guess', guess })
+          guess(g)
         }
       } else if (phase === 'revealed' && (e.key === 'Enter' || e.key === ' ')) {
         // A focused button handles Enter / Space itself; avoid a double "Next"
         if (tag === 'BUTTON') return
         e.preventDefault()
-        dispatch({ type: 'next' })
+        next()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [phase])
+  }, [phase, flying, confirmingBack, guess, next])
 
   const score = getScore(state)
   const placed = placedCards(state, sideA, sideB)
@@ -85,10 +115,11 @@ export function GameScreen({ sideA, sideB, onBack, onNewTeams }: Props) {
 
   return (
     <div className={styles.screen}>
-      <GameHeader sideA={sideA} sideB={sideB} onBack={onBack} />
+      {/* Leaving mid-game asks first (D41) */}
+      <GameHeader sideA={sideA} sideB={sideB} onBack={() => setConfirmingBack(true)} />
       <Scoreboard score={score} roundNumber={n} slot={round.slot} />
 
-      <main className={styles.body}>
+      <main className={styles.body} ref={boardRef}>
         <div className={styles.pitchArea}>
           <div className={styles.pitchFrame}>
             <Pitch currentSlot={round.slot} placed={placed} />
@@ -96,16 +127,34 @@ export function GameScreen({ sideA, sideB, onBack, onNewTeams }: Props) {
         </div>
 
         <GuessPanel
+          // One panel per round: cards flip in place, and nothing (e.g. focus) carries over
+          key={n}
           round={round}
           roundNumber={n}
           isLastRound={n === ROUND_COUNT}
           result={currentResult(state)}
           sideA={sideA}
           sideB={sideB}
-          onGuess={(guess) => dispatch({ type: 'guess', guess })}
-          onNext={() => dispatch({ type: 'next' })}
+          peek={peek}
+          flying={flying}
+          onGuess={guess}
+          onNext={next}
+          onTogglePeek={() => setPeek((p) => !p)}
         />
       </main>
+
+      <ConfirmDialog
+        open={confirmingBack}
+        title="Leave this game?"
+        message="Your progress in this game will be lost."
+        cancelLabel="Keep playing"
+        confirmLabel="Leave game"
+        onCancel={() => setConfirmingBack(false)}
+        onConfirm={() => {
+          setConfirmingBack(false)
+          onBack()
+        }}
+      />
     </div>
   )
 }
@@ -124,7 +173,11 @@ function Scoreboard({ score, roundNumber, slot }: { score: Score; roundNumber: n
         {score.ties > 0 && <span className={styles.ties}>· {score.ties} tie{score.ties > 1 ? 's' : ''}</span>}
       </p>
       <p className={styles.round}>
-        Round <strong>{roundNumber} / {ROUND_COUNT}</strong> <span className={styles.slotChip}>{slot}</span>
+        <span className={styles.roundWord}>Round </span>
+        <strong>
+          {roundNumber} / {ROUND_COUNT}
+        </strong>{' '}
+        <span className={styles.slotChip}>{slot}</span>
       </p>
     </div>
   )

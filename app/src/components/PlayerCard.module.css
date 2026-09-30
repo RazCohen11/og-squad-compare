@@ -1,19 +1,26 @@
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 0.2rem;
-  width: 100%;
-  min-width: 0;
-  padding: 0.7rem 0.7rem 0.75rem;
-  border: 2px solid var(--border);
-  border-top: 4px solid var(--team);
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
-  text-align: left;
-  font-size: 0.85rem;
+/* ---------- Tier palettes (D37), used only on revealed and mini cards ---------- */
+.gold {
+  --card-bg: linear-gradient(155deg, #fff4c4 0%, #f3cf5a 30%, #d9a92a 62%, #a87a12 100%);
+  --card-ink: #2b1f00;
+  --card-soft: rgba(43, 31, 0, 0.62);
+  --card-line: rgba(90, 62, 0, 0.28);
+  --card-sheen: rgba(255, 255, 255, 0.45);
+}
+
+.silver {
+  --card-bg: linear-gradient(155deg, #ffffff 0%, #e2e7ec 30%, #b4bec8 64%, #7f8b97 100%);
+  --card-ink: #1a222a;
+  --card-soft: rgba(26, 34, 42, 0.6);
+  --card-line: rgba(40, 52, 64, 0.25);
+  --card-sheen: rgba(255, 255, 255, 0.55);
+}
+
+.bronze {
+  --card-bg: linear-gradient(155deg, #ffe0c7 0%, #e0a577 30%, #b87445 64%, #7c4521 100%);
+  --card-ink: #2a1407;
+  --card-soft: rgba(42, 20, 7, 0.62);
+  --card-line: rgba(90, 40, 10, 0.28);
+  --card-sheen: rgba(255, 255, 255, 0.4);
 }
 
 .sideA {
@@ -24,39 +31,205 @@
   --team: var(--team-b);
 }
 
-.hidden {
-  min-height: 11rem;
+/* ---------- Flip scene: both faces share one grid cell ---------- */
+.scene {
+  perspective: 1100px;
+  min-width: 0;
+}
+
+.flipper {
+  display: grid;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+.flipped {
+  transform: rotateY(180deg);
+}
+
+.face {
+  grid-area: 1 / 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.18rem;
+  min-width: 0;
+  min-height: 13.75rem;
+  margin: 0;
+  padding: 0.65rem 0.7rem 0.7rem;
+  border-radius: 14px;
+  text-align: left;
+  font-size: 0.82rem;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+/* A thin team-colour strip along the top edge */
+.face::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--team);
+}
+
+/* ---------- Hidden face (D38): neutral frame, no tier colour ---------- */
+.front {
+  border: 1px solid #3b4d44;
+  background:
+    radial-gradient(120% 60% at 100% 0%, rgba(255, 255, 255, 0.06), transparent 60%),
+    linear-gradient(160deg, #26352e 0%, #18221d 100%);
+  color: var(--text);
   cursor: pointer;
-  transition: border-color 0.15s, background-color 0.15s;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), inset 0 0 0 3px rgba(255, 255, 255, 0.03);
+  transition: border-color 0.15s, transform 0.15s;
 }
 
-.hidden:hover {
+.front:hover:not(:disabled) {
   border-color: var(--team);
-  background: var(--surface-2);
 }
 
-.hidden:active {
+.front:active:not(:disabled) {
   transform: scale(0.98);
 }
 
-.team {
+.front:disabled {
+  cursor: default;
+}
+
+/* ---------- Revealed face ---------- */
+.back {
+  transform: rotateY(180deg);
+  border: 1px solid var(--card-line);
+  background: var(--card-bg);
+  color: var(--card-ink);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4), inset 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+/* Diagonal sheen */
+.back::after {
+  content: '';
+  position: absolute;
+  inset: -40% auto auto -60%;
+  width: 70%;
+  height: 180%;
+  background: linear-gradient(90deg, transparent, var(--card-sheen), transparent);
+  transform: rotate(25deg);
+  pointer-events: none;
+}
+
+.back.higher {
+  box-shadow: 0 0 0 3px var(--accent), 0 0 22px rgba(242, 193, 78, 0.55), inset 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+.back.lower {
+  filter: saturate(0.55) brightness(0.82);
+}
+
+/* ---------- Shared layout ---------- */
+.top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.ratingSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 2.6rem;
+  line-height: 1;
+}
+
+.question {
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: #6f8a7c;
+}
+
+.ovr {
+  font-size: 2.3rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.slot {
+  margin-top: 0.15rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.front .avatar {
+  background: #33463d;
+  color: #d7e4dc;
+  box-shadow: inset 0 0 0 2px #46604f;
+}
+
+.back .avatar {
+  background: rgba(255, 255, 255, 0.35);
+  color: var(--card-ink);
+  box-shadow: inset 0 0 0 2px var(--card-line);
+}
+
+.name {
+  margin-top: 0.35rem;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.positions {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.8rem;
+}
+
+.nation {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.club {
   display: flex;
   align-items: center;
   gap: 0.3rem;
   min-width: 0;
-  font-size: 0.72rem;
+  font-size: 0.74rem;
+}
+
+.front .club {
   color: var(--muted);
 }
 
-.marker {
+.teamDot {
   flex: none;
-  width: 0.55rem;
-  height: 0.55rem;
+  width: 0.5rem;
+  height: 0.5rem;
   border-radius: 50%;
   background: var(--team);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25);
 }
 
-.teamName {
+.clubName {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -65,120 +238,197 @@
 
 .version {
   flex: none;
-  font-weight: 600;
-}
-
-.name {
-  margin-top: 0.2rem;
-  font-size: 1.05rem;
   font-weight: 700;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
 }
 
-.positions {
-  font-weight: 600;
-  color: var(--accent);
+.age {
+  color: var(--muted);
+  font-size: 0.76rem;
 }
 
 .meta {
-  color: var(--muted);
-  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 0;
+  color: var(--card-soft);
+  font-size: 0.78rem;
 }
 
-.guessHint {
+.hint {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.4rem;
   margin-top: auto;
-  padding-top: 0.5rem;
-  font-weight: 600;
-  color: var(--text);
+  padding-top: 0.45rem;
+  border-top: 1px solid #33463d;
+  font-weight: 700;
+  font-size: 0.85rem;
 }
 
 .kbd {
   display: none;
   padding: 0 0.35rem;
-  border: 1px solid var(--border);
+  border: 1px solid #46604f;
   border-radius: 4px;
   font-family: inherit;
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   color: var(--muted);
 }
 
-/* Keyboard hints only where a keyboard is likely */
 @media (hover: hover) and (pointer: fine) {
   .kbd {
     display: inline-block;
   }
 }
 
-.revealed.winner {
-  border-color: var(--accent);
+/* Two stat columns: PAC SHO PAS | DRI DEF PHY (or the GK equivalents) */
+.stats {
+  display: grid;
+  grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column;
+  gap: 0.12rem 0.9rem;
+  margin: auto 0 0;
+  padding-top: 0.4rem;
+  border-top: 1px solid var(--card-line);
 }
 
-.revealed.loser {
-  opacity: 0.85;
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.stat dd {
+  order: -1;
+  min-width: 1.4rem;
+  margin: 0;
+  font-weight: 900;
+  font-size: 0.92rem;
+}
+
+.stat dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--card-soft);
 }
 
 .badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: 0.2rem;
   min-height: 1.15rem;
+  margin-top: 0.15rem;
 }
 
 .badgeHigher,
 .badgeTie,
 .badgePick {
-  padding: 0 0.4rem;
+  padding: 0 0.45rem;
   border-radius: 999px;
-  font-size: 0.68rem;
-  font-weight: 700;
+  font-size: 0.64rem;
+  font-weight: 800;
   line-height: 1.15rem;
+  white-space: nowrap;
 }
 
 .badgeHigher {
-  background: var(--accent);
-  color: var(--accent-text);
+  background: #14231b;
+  color: var(--accent);
 }
 
 .badgeTie {
-  background: #d9d9d9;
-  color: #1a1a1a;
+  background: #14231b;
+  color: #f0f0f0;
 }
 
 .badgePick {
-  border: 1px solid var(--muted);
-  color: var(--muted);
+  border: 1px solid currentColor;
+  background: rgba(255, 255, 255, 0.4);
 }
 
-.ovr {
-  font-size: 2rem;
-  font-weight: 800;
+/* The team strip already shows the team colour on a revealed card */
+.back .teamDot {
+  display: none;
+}
+
+/* ---------- Mini card (pitch slot) ---------- */
+.mini {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3%;
+  padding: 10% 5% 6%;
+  border-radius: 10%;
+  background: var(--card-bg);
+  color: var(--card-ink);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45), inset 0 0 0 1px var(--card-line);
+  text-align: center;
+  animation: mini-in 0.25s ease-out;
+}
+
+/* Team colour marker along the top */
+.mini::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 9%;
+  border-radius: 10% 10% 0 0 / 60% 60% 0 0;
+  background: var(--team);
+}
+
+.miniOvr {
+  font-size: max(0.85rem, 5.2cqw);
+  font-weight: 900;
   line-height: 1;
 }
 
-.stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.2rem 0.4rem;
-  margin: 0.4rem 0 0;
-}
-
-.stat {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.2rem;
-  font-size: 0.75rem;
-}
-
-.stat dt {
-  color: var(--muted);
-}
-
-.stat dd {
-  margin: 0;
+.miniName {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: max(0.55rem, 2.45cqw);
   font-weight: 700;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
+.tieTag {
+  position: absolute;
+  top: -0.6em;
+  right: -0.6em;
+  padding: 0 0.35em;
+  border-radius: 999px;
+  background: #f0f0f0;
+  color: #1a1a1a;
+  font-size: max(0.5rem, 2.2cqw);
+  font-weight: 900;
+  line-height: 1.45;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes mini-in {
+  from {
+    transform: scale(0.85);
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flipper,
+  .front {
+    transition: none;
+  }
+
+  .mini {
+    animation: none;
+  }
 }

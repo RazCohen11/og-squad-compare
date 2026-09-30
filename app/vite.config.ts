@@ -5,4 +5,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   base: './',
   plugins: [react()],
+  build: {
+    // Never inline flag SVGs as data URLs: there are ~270 of them and only a few are shown per game
+    assetsInlineLimit: (filePath) => (filePath.includes('flag-icons') ? false : undefined),
+  },
 })

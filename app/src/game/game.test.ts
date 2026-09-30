@@ -21,6 +21,7 @@ function player(slot: Slot, ovr: number, id: number): XiPlayer {
     name: `P${id}`,
     fullName: `Player ${id}`,
     nation: 'Nowhere',
+    nationCode: 'xx',
     age: 25,
     positions: [],
     ovr,

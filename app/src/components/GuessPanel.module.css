@@ -8,19 +8,63 @@
   justify-content: flex-end;
   background: rgba(4, 14, 8, 0.68);
   border-radius: 8px;
+  overflow: hidden;
+  transition: background-color 0.2s, opacity 0.15s;
 }
 
-/* A solid sheet, so text never sits on pitch lines */
+/* A solid sheet, so text never sits on pitch lines. Re-mounted every round: slides in. */
 .panel {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   max-height: 100%;
   overflow-y: auto;
-  padding: 0.6rem 0.5rem 0.5rem;
+  padding: 0.55rem 0.5rem 0.5rem;
   border-radius: 14px 14px 8px 8px;
   background: rgba(11, 31, 20, 0.97);
   box-shadow: 0 -6px 24px rgba(0, 0, 0, 0.45);
+  animation: panel-in 0.28s ease-out;
+  transition: transform 0.25s ease, opacity 0.2s;
+}
+
+/* Peek: the panel slides away and the pitch is shown undimmed */
+.peek {
+  background: transparent;
+  pointer-events: none;
+}
+
+.peek .panel {
+  position: absolute;
+  inset: auto 0 0;
+  transform: translateY(110%);
+  opacity: 0;
+}
+
+.showCards {
+  pointer-events: auto;
+  align-self: stretch;
+  min-height: 3rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 800;
+  font-size: 1rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+}
+
+/* While the winner flies into its slot, the panel steps aside */
+.flying {
+  opacity: 0;
+  background: transparent;
+  pointer-events: none;
+}
+
+.questionRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .question {
@@ -28,9 +72,29 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0.2rem 0.5rem;
-  min-height: 2.6rem;
-  padding: 0 0.25rem;
+  min-height: 2.4rem;
+  padding: 0.1rem 0.25rem 0;
   font-weight: 600;
+}
+
+.peekButton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 2.2rem;
+  padding: 0 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.icon {
+  width: 0.8rem;
+  height: 1rem;
 }
 
 .slot {
@@ -111,7 +175,14 @@
   }
 }
 
-/* Desktop: a panel next to the pitch */
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+/* Desktop: a panel next to the pitch; no peek needed */
 @media (min-width: 52rem) {
   .overlay {
     position: static;
@@ -119,6 +190,7 @@
     width: 25rem;
     justify-content: center;
     background: none;
+    overflow: visible;
   }
 
   .panel {
@@ -127,5 +199,18 @@
     overflow: visible;
     background: none;
     box-shadow: none;
+  }
+
+  .peekButton,
+  .showCards {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay,
+  .panel {
+    transition: none;
+    animation: none;
   }
 }

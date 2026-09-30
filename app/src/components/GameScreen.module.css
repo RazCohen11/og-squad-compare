@@ -21,6 +21,7 @@
 .mainScore {
   display: flex;
   gap: 0.7rem;
+  white-space: nowrap;
   font-size: 1.35rem;
   font-weight: 800;
   line-height: 1.1;
@@ -89,6 +90,23 @@
   flex: 1;
   min-height: 0;
   display: flex;
+}
+
+/* Very narrow phones: the word "Round" is dropped visually (still read by screen readers) */
+@media (max-width: 25rem) {
+  .scoreboard {
+    gap: 0.5rem;
+    padding-inline: 0.6rem;
+  }
+
+  .roundWord {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
 }
 
 /* Size container: the pitch takes the largest 68:100 box that fits */

@@ -58,6 +58,8 @@ interface PlayerBase {
   name: string
   fullName: string
   nation: string
+  // Flag code for flag-icons: ISO 3166-1 alpha-2, or gb-eng / gb-sct / gb-wls / gb-nir (D39)
+  nationCode: string
   age: number
   positions: Position[]
   ovr: number

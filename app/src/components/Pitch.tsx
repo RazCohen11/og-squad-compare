@@ -2,6 +2,7 @@ import type { Slot } from '../data/types'
 import type { PlacedCard } from '../game/placed'
 import { SLOTS, SLOT_POSITIONS } from '../game/slots'
 import styles from './Pitch.module.css'
+import { PlayerCard } from './PlayerCard'
 
 interface Props {
   currentSlot: Slot | null
@@ -30,33 +31,17 @@ export function Pitch({ currentSlot, placed }: Props) {
           const { x, y } = SLOT_POSITIONS[slot]
           const isCurrent = slot === currentSlot
           const card = bySlot.get(slot)
-          const classes = [styles.slot, isCurrent ? styles.current : '', card ? styles.filled : '']
-          if (card) classes.push(card.side === 'A' ? styles.sideA : styles.sideB)
           return (
             <li
               key={slot}
-              className={classes.join(' ')}
+              className={`${styles.slot} ${isCurrent ? styles.current : ''} ${card ? styles.filled : ''}`}
               style={{ left: `${x}%`, top: `${y}%` }}
               aria-current={isCurrent ? 'step' : undefined}
+              // Target of the "fly to slot" animation
+              data-slot={slot}
             >
               {card ? (
-                <>
-                  <span className="visually-hidden">
-                    {slot}: {card.player.name}, {card.player.ovr}, {card.teamName}
-                    {card.tie ? ', tie' : ''}
-                  </span>
-                  <span className={styles.miniOvr} aria-hidden="true">
-                    {card.player.ovr}
-                  </span>
-                  <span className={styles.miniName} aria-hidden="true">
-                    {card.player.name}
-                  </span>
-                  {card.tie && (
-                    <span className={styles.tieTag} aria-hidden="true">
-                      TIE
-                    </span>
-                  )}
-                </>
+                <PlayerCard state="mini" player={card.player} team={card.team} tie={card.tie} />
               ) : (
                 <>
                   <span className={styles.slotCode}>{slot}</span>

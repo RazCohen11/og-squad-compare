@@ -11,6 +11,7 @@ from collections import Counter
 from pathlib import Path
 
 from best_xi import ADJACENT, NATURAL, SLOTS
+from nations import CODE_PATTERN
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "app" / "public" / "data"
@@ -26,7 +27,7 @@ EXPECTED_COUNTS[24][16] = 18  # Ligue 1 had 18 clubs in 2023-24
 
 STATS_KEYS = {"pac", "sho", "pas", "dri", "def", "phy"}
 GK_KEYS = {"div", "han", "kic", "ref", "spd", "pos"}
-PLAYER_KEYS = {"slot", "id", "name", "fullName", "nation", "age", "positions", "ovr", "eaPos", "fit"}
+PLAYER_KEYS = {"slot", "id", "name", "fullName", "nation", "nationCode", "age", "positions", "ovr", "eaPos", "fit"}
 NON_XI = {"SUB", "RES"}
 
 
@@ -94,6 +95,8 @@ def main() -> int:
                     err(f"{pw}: ovr {p['ovr']}")
                 if not p["name"] or not p["nation"] or not isinstance(p["eaPos"], str):
                     err(f"{pw}: empty name/nation/eaPos")
+                if not isinstance(p["nationCode"], str) or not CODE_PATTERN.match(p["nationCode"]):
+                    err(f"{pw}: bad nationCode {p['nationCode']!r}")
                 positions = set(p["positions"])
                 if p["fit"] == "natural":
                     if not positions & NATURAL[p["slot"]]:

@@ -16,6 +16,7 @@ from pathlib import Path
 import pandas as pd
 
 from best_xi import NON_XI_EA_POSITIONS, SLOTS, Player, best_xi
+from nations import nation_code
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = ROOT / "data" / "raw" / "FIFA 15-24"
@@ -97,6 +98,8 @@ def player_json(slot: str, fit: str, row) -> dict:
         "name": row.short_name,
         "fullName": row.long_name,
         "nation": row.nationality_name,
+        # Fails loudly if the nation has no flag code (D39)
+        "nationCode": nation_code(row.nationality_name),
         "age": as_int(row.age, f"age of {row.short_name}"),
         "positions": list(parse_positions(row.player_positions)),
         "ovr": as_int(row.overall, f"overall of {row.short_name}"),

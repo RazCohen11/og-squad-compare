@@ -223,3 +223,34 @@
     grid-area: rounds;
   }
 }
+
+/* Short, subtle entrance for the score */
+.summary {
+  animation: summary-in 0.45s ease-out;
+}
+
+.bigScore strong {
+  display: inline-block;
+  animation: score-pop 0.6s cubic-bezier(0.3, 1.5, 0.5, 1) 0.1s both;
+}
+
+@keyframes summary-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes score-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .summary,
+  .bigScore strong {
+    animation: none;
+  }
+}
