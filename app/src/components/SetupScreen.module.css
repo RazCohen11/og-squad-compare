@@ -1,5 +1,6 @@
 .screen {
   width: 100%;
+  min-height: 100dvh;
   max-width: 34rem;
   margin: 0 auto;
   padding: max(1.25rem, env(safe-area-inset-top)) 1rem max(1.5rem, env(safe-area-inset-bottom));

@@ -1,0 +1,9 @@
+.footer {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--muted);
+  opacity: 0.8;
+  text-align: center;
+}

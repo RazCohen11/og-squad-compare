@@ -4,6 +4,7 @@ import type { LoadResult } from '../data/useData'
 import type { Side } from '../game/game'
 import { groupTeamsByLeague } from '../lib/teams'
 import { ClubPicker } from './ClubPicker'
+import { Footer } from './Footer'
 import styles from './SetupScreen.module.css'
 import { StatusMessage } from './StatusMessage'
 
@@ -73,6 +74,7 @@ export function SetupScreen({ versions, pickA, pickB, teamsA, teamsB, onPickACha
           Start
         </button>
       </form>
+      <Footer />
     </main>
   )
 }

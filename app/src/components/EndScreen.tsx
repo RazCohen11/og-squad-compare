@@ -3,6 +3,7 @@ import type { PlacedCard } from '../game/placed'
 import type { GameSide } from '../game/sides'
 import { ROUND_COUNT } from '../game/slots'
 import styles from './EndScreen.module.css'
+import { Footer } from './Footer'
 import { GameHeader } from './GameHeader'
 import { Pitch } from './Pitch'
 
@@ -103,6 +104,7 @@ export function EndScreen({ state, score, placed, sideA, sideB, onBack, onPlayAg
           </ol>
         </section>
       </main>
+      <Footer />
     </div>
   )
 }
