@@ -1,10 +1,11 @@
 # OG Squad Compare — project context for Claude Code
 
 ## What we are building
-A browser guessing game. The player picks a FIFA/FC game version (year) and two clubs.
-Both clubs' in-game starting XIs are laid out on a pitch, slot by slot. For each slot the
+A single-player browser guessing game. The player picks two clubs, each from any FIFA/FC game version
+(e.g. Barcelona FIFA 15 vs Real Madrid FIFA 17). Each club's Best XI (see docs/PLAN.md §3) is laid out on a
+4-3-3 pitch, slot by slot. For each slot the
 player sees two cards (one per club) WITHOUT rating and stats, and guesses which player has
-the higher Ultimate Team base rating. The answer is revealed, the higher-rated card (fully
+the higher Ultimate Team base rating (or that they are equal). The main score is correct vs wrong guesses. The answer is revealed, the higher-rated card (fully
 revealed) drops into the slot on the pitch, and the game moves to the next slot.
 
 ## How work is organised
