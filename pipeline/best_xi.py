@@ -7,7 +7,12 @@ Selection rules
 - The squad is every player of the club in one version (starters, SUB and RES).
 - A player is *naturally* eligible for a slot when any of the generic positions in the player's
   `player_positions` is in NATURAL[slot].
-- The assignment is optimal (scipy `linear_sum_assignment`) and maximises the sum of `overall`.
+- The assignment is optimal (scipy `linear_sum_assignment`) and maximises the sum of each pick's value:
+  - a natural pick whose slot matches the player's FIRST listed position is valued at `overall`;
+  - a natural pick that matches only a secondary position is valued at `overall - SECONDARY_PENALTY`
+    (D24; a FUT card shows one position, the first one);
+  - an adjacent pick is valued at `overall - ADJACENT_PENALTY` (see Fallback below).
+  The `overall` written to the output is never changed; the penalties only steer the assignment.
 - Tie-breaks, in order, are small bonuses in the cost that together can never outweigh 1 rating point:
   1. the slot matches the player's FIRST listed position,
   2. the player was in EA's starting XI,
@@ -69,6 +74,7 @@ ADJACENT: dict[str, frozenset[str]] = {
 # Groups of slots with identical eligibility, listed left to right
 INTERCHANGEABLE: tuple[tuple[str, ...], ...] = (("LCB", "RCB"), ("LCM", "CM", "RCM"))
 
+SECONDARY_PENALTY = 3
 ADJACENT_PENALTY = 5
 NON_XI_EA_POSITIONS = frozenset({"SUB", "RES"})
 
@@ -138,8 +144,11 @@ def best_xi(squad: list[Player] | tuple[Player, ...]) -> list[Pick]:
         for i, slot in enumerate(SLOTS):
             fit = fit_for(p, slot)
             if fit == "natural":
-                first_bonus = _BONUS_FIRST_POS if p.positions and p.positions[0] in NATURAL[slot] else 0.0
-                cost[i, j] = -(p.overall + first_bonus + ea_bonus + id_bonus)
+                if p.positions and p.positions[0] in NATURAL[slot]:
+                    value = p.overall + _BONUS_FIRST_POS
+                else:
+                    value = p.overall - SECONDARY_PENALTY
+                cost[i, j] = -(value + ea_bonus + id_bonus)
             elif fit == "adjacent":
                 cost[i, j] = _ADJACENT_COST - (p.overall - ADJACENT_PENALTY + ea_bonus + id_bonus)
 

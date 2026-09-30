@@ -134,6 +134,62 @@ def test_interchangeable_slots_follow_ea_side():
     assert picks["RCB"].player.id == 3
 
 
+def winger_squad(natural_cm_ovr):
+    """12 players, one sits out. W (88, LW then CAM) competes with X (88, LW) for LW and with Y for CM.
+
+    W at LW + Y at CM is worth 88 + Y; W at CM + X at LW is worth (88 - 3) + 88 = 173.
+    So W stays wide when Y is within 3 points of W (Y >= 86), and moves to CM when the gap is larger.
+    """
+    return [
+        make(1, 80, "GK", "GK"),
+        make(2, 80, "LB", "LB"),
+        make(3, 80, "CB", "LCB"),
+        make(4, 80, "CB", "RCB"),
+        make(5, 80, "RB", "RB"),
+        make(6, 90, "CM", "LCM"),
+        make(7, 90, "CM", "RCM"),
+        make(8, natural_cm_ovr, "CM", "CM"),  # Y
+        make(9, 88, "LW CAM", "LW"),  # W
+        make(10, 88, "LW"),  # X
+        make(11, 85, "ST", "ST"),
+        make(12, 85, "RW", "RW"),
+    ]
+
+
+def test_wide_first_player_stays_wide_when_natural_cm_is_within_penalty():
+    picks = by_slot(best_xi(winger_squad(86)))
+    assert picks["LW"].player.id == 9
+    cm_ids = {picks[s].player.id for s in ("LCM", "CM", "RCM")}
+    assert cm_ids == {6, 7, 8}
+    assert 10 not in {p.player.id for p in picks.values()}
+
+
+def test_wide_first_player_moves_to_cm_when_gap_exceeds_penalty():
+    picks = by_slot(best_xi(winger_squad(84)))
+    cm_ids = {picks[s].player.id for s in ("LCM", "CM", "RCM")}
+    assert 9 in cm_ids
+    assert picks["LW"].player.id == 10
+    assert 8 not in {p.player.id for p in picks.values()}
+
+
+def test_secondary_pick_still_beats_much_weaker_primary_pick():
+    # CB 85 (RB secondary) is valued 82 at RB, above the natural RB 78; the CB slots hold 88 and 87
+    squad = [
+        make(1, 80, "GK", "GK"),
+        make(2, 80, "LB", "LB"),
+        make(3, 88, "CB", "LCB"),
+        make(4, 87, "CB", "RCB"),
+        make(5, 78, "RB", "RB"),
+        make(6, 85, "CB RB"),
+        make(7, 80, "CM"), make(8, 80, "CM"), make(9, 80, "CM"),
+        make(10, 80, "LW"), make(11, 80, "ST"), make(12, 80, "RW"),
+    ]
+    picks = by_slot(best_xi(squad))
+    assert picks["RB"].player.id == 6
+    assert picks["RB"].fit == "natural"
+    assert 5 not in {p.player.id for p in picks.values()}
+
+
 def test_unfillable_gk_raises():
     squad = [p for p in base_squad() if "GK" not in p.positions]
     with pytest.raises(UnfillableSlotError, match="GK"):

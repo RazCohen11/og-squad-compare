@@ -16,7 +16,7 @@ from best_xi import NON_XI_EA_POSITIONS
 from build import OUT_DIR, PLAYERS_CSV, version_label
 
 # (version, team_id) of the XIs printed for the eye check
-SAMPLE_XIS = [(21, 241), (22, 73), (24, 243), (24, 10), (16, 11)]
+SAMPLE_XIS = [(21, 241), (22, 73), (24, 243), (24, 10), (16, 11), (18, 9)]
 
 
 def md_table(rows: list[dict]) -> str:
