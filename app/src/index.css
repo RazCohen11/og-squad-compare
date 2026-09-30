@@ -8,6 +8,10 @@
   --accent: #f2c14e;
   --accent-text: #1d1604;
   --danger: #ff9a8f;
+  --success: #7ee2a0;
+  /* Subtle team colours, used for small markers only (D33) */
+  --team-a: #5aa9ff;
+  --team-b: #ff6b6b;
   --pitch-a: #2f8a4d;
   --pitch-b: #2a7f47;
   --pitch-line: rgba(255, 255, 255, 0.8);

@@ -3,7 +3,10 @@ import { filterGroups, type LeagueGroup } from '../lib/teams'
 import styles from './ClubPicker.module.css'
 
 interface Props {
+  // Visible label of the trigger, e.g. "Club"
   label: string
+  // Accessible context, e.g. "Team A"
+  owner: string
   groups: LeagueGroup[]
   selectedId: number | null
   // Club already picked by the other side; it cannot be picked here
@@ -12,7 +15,7 @@ interface Props {
   onSelect: (id: number) => void
 }
 
-export function ClubPicker({ label, groups, selectedId, takenId, takenBy, onSelect }: Props) {
+export function ClubPicker({ label, owner, groups, selectedId, takenId, takenBy, onSelect }: Props) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -41,7 +44,10 @@ export function ClubPicker({ label, groups, selectedId, takenId, takenBy, onSele
         aria-controls={panelId}
         onClick={() => (open ? close() : setOpen(true))}
       >
-        <span className={styles.triggerLabel}>{label}</span>
+        <span className={styles.triggerLabel}>
+          {label}
+          <span className="visually-hidden"> for {owner}</span>
+        </span>
         <span className={styles.triggerValue}>{selected ? selected.team.name : 'Choose a club'}</span>
         {selected && <span className={styles.triggerLeague}>{selected.league.name}</span>}
         <span className={styles.chevron} aria-hidden="true">
@@ -61,7 +67,7 @@ export function ClubPicker({ label, groups, selectedId, takenId, takenBy, onSele
           }}
         >
           <label htmlFor={searchId} className="visually-hidden">
-            Search clubs for {label}
+            Search clubs for {owner}
           </label>
           <input
             id={searchId}

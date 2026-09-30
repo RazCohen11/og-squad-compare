@@ -112,3 +112,49 @@
 .current .slotCode {
   color: #fff;
 }
+
+/* Mini card of a placed winner */
+.filled {
+  flex-direction: column;
+  gap: 4%;
+  padding: 4%;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-top: 4px solid var(--team);
+  background: #10281a;
+}
+
+.sideA {
+  --team: var(--team-a);
+}
+
+.sideB {
+  --team: var(--team-b);
+}
+
+.miniOvr {
+  font-size: max(0.8rem, 4.6cqw);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.miniName {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: max(0.55rem, 2.6cqw);
+  font-weight: 600;
+}
+
+.tieTag {
+  position: absolute;
+  top: -0.55em;
+  right: -0.55em;
+  padding: 0 0.3em;
+  border-radius: 999px;
+  background: #d9d9d9;
+  color: #1a1a1a;
+  font-size: max(0.5rem, 2.2cqw);
+  font-weight: 800;
+  line-height: 1.4;
+}

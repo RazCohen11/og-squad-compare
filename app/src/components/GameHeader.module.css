@@ -1,0 +1,82 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.back {
+  flex: none;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 0.9rem;
+}
+
+/* Two stacked lines on phones, one line on wider screens */
+.matchup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 0.9rem;
+  line-height: 1.25;
+}
+
+.vs {
+  display: none;
+  flex: none;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.sideA {
+  --team: var(--team-a);
+}
+
+.sideB {
+  --team: var(--team-b);
+}
+
+.marker {
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--team);
+}
+
+.name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.version {
+  flex: none;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+@media (min-width: 52rem) {
+  .matchup {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.6rem;
+    font-size: 1.15rem;
+  }
+
+  .vs {
+    display: inline;
+  }
+}

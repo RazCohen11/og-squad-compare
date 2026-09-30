@@ -1,0 +1,225 @@
+/* Unlike the game screen, the end screen scrolls */
+.screen {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: max(0.5rem, env(safe-area-inset-top)) 0.75rem max(1.25rem, env(safe-area-inset-bottom));
+}
+
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 1rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+
+.bigScore {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.bigScore strong {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--success);
+}
+
+.wrongLine {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.tally {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.tallyTeam {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--text);
+}
+
+.dotA,
+.dotB {
+  display: inline-block;
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+
+.dotA {
+  background: var(--team-a);
+}
+
+.dotB {
+  background: var(--team-b);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: 0.6rem;
+}
+
+.primary,
+.secondary {
+  min-height: 3rem;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.primary {
+  border: none;
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.secondary {
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.pitchWrap {
+  width: 100%;
+  max-width: 24rem;
+  margin: 0 auto;
+}
+
+.roundsTitle {
+  margin-bottom: 0.4rem;
+  font-size: 1rem;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr) minmax(0, 1fr) 3.2rem;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.6rem;
+  font-size: 0.82rem;
+}
+
+.row + .row {
+  border-top: 1px solid var(--border);
+}
+
+.headRow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.teamHead {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.slot {
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.player {
+  display: flex;
+  gap: 0.3rem;
+  min-width: 0;
+  color: var(--muted);
+}
+
+.playerName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.higher {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.guessCol {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.correct {
+  color: var(--success);
+  font-weight: 800;
+}
+
+.wrong {
+  color: var(--danger);
+  font-weight: 800;
+}
+
+/* Desktop: summary and rounds on the right, pitch on the left */
+@media (min-width: 52rem) {
+  .screen {
+    padding: 1rem 1.5rem 2rem;
+  }
+
+  .screen > * {
+    width: 100%;
+    max-width: 66rem;
+    margin-inline: auto;
+  }
+
+  .body {
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    grid-template-areas:
+      'pitch summary'
+      'pitch rounds';
+    align-items: start;
+    column-gap: 2rem;
+  }
+
+  .pitchWrap {
+    grid-area: pitch;
+    max-width: none;
+  }
+
+  .summary {
+    grid-area: summary;
+  }
+
+  .rounds {
+    grid-area: rounds;
+  }
+}
