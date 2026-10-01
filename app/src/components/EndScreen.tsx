@@ -16,6 +16,9 @@ interface Props {
   onBack: () => void
   onPlayAgain: () => void
   onNewTeams: () => void
+  // Random games only (D49)
+  onAnotherRandom?: () => void
+  randomBusy?: boolean
 }
 
 function guessLabel(guess: Guess): string {
@@ -23,7 +26,8 @@ function guessLabel(guess: Guess): string {
 }
 
 // End screen (D34): score, slot tally, the combined XI and a summary of the 11 rounds
-export function EndScreen({ state, score, placed, sideA, sideB, onBack, onPlayAgain, onNewTeams }: Props) {
+export function EndScreen(props: Props) {
+  const { state, score, placed, sideA, sideB, onBack, onPlayAgain, onNewTeams, onAnotherRandom, randomBusy = false } = props
   return (
     <div className={styles.screen}>
       <GameHeader sideA={sideA} sideB={sideB} onBack={onBack} />
@@ -57,6 +61,11 @@ export function EndScreen({ state, score, placed, sideA, sideB, onBack, onPlayAg
             <button type="button" className={styles.secondary} onClick={onNewTeams}>
               New teams
             </button>
+            {onAnotherRandom && (
+              <button type="button" className={styles.random} onClick={onAnotherRandom} disabled={randomBusy}>
+                <span aria-hidden="true">🎲</span> {randomBusy ? 'Picking a matchup…' : 'Another random matchup'}
+              </button>
+            )}
           </div>
         </section>
 

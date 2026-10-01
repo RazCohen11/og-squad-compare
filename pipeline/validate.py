@@ -40,6 +40,8 @@ def main() -> int:
     errors: list[str] = []
     err = errors.append
     summary = []
+    # Expected index.json entries, rebuilt from the team files: (version, team id) -> entry
+    expected_index: dict[tuple[int, int], dict] = {}
 
     versions = json.loads((DATA_DIR / "versions.json").read_text(encoding="utf-8"))
     if [v.get("id") for v in versions] != VERSIONS:
@@ -70,6 +72,11 @@ def main() -> int:
         adjacent = bench = 0
         for t in teams:
             tw = f"{where} {t['name']}"
+            if t["xi"]:
+                expected_index[(v, t["id"])] = {
+                    "v": v, "id": t["id"], "name": t["name"], "leagueId": t["leagueId"],
+                    "xiAvg": round(sum(p["ovr"] for p in t["xi"]) / len(t["xi"]), 2),
+                }
             if t["id"] in team_ids:
                 err(f"{tw}: duplicate team id {t['id']}")
             team_ids.add(t["id"])
@@ -122,6 +129,27 @@ def main() -> int:
                 seen_players[p["id"]] = t["name"]
 
         summary.append((v, len(teams), sum(len(t["xi"]) for t in teams), adjacent, bench))
+
+    # index.json (random matchup mode, D45) must match the team files exactly
+    index_path = DATA_DIR / "index.json"
+    if not index_path.exists():
+        err("index.json missing")
+    else:
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        seen_keys: set[tuple[int, int]] = set()
+        for entry in index:
+            key = (entry.get("v"), entry.get("id"))
+            if key in seen_keys:
+                err(f"index.json: duplicate entry {key}")
+            seen_keys.add(key)
+            expected = expected_index.get(key)
+            if expected is None:
+                err(f"index.json: unknown team {key}")
+            elif entry != expected:
+                err(f"index.json: {key} is {entry}, expected {expected}")
+        for key in expected_index.keys() - seen_keys:
+            err(f"index.json: missing team {key}")
+        print(f"index.json: {len(index)} teams")
 
     print(f"{'version':>7} {'teams':>5} {'players':>7} {'adjacent':>8} {'from SUB/RES':>12}")
     for v, nt, npl, adj, bench in summary:

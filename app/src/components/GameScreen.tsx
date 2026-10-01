@@ -25,6 +25,9 @@ interface Props {
   sideB: GameSide
   onBack: () => void
   onNewTeams: () => void
+  // Only for random games: start another random matchup from the end screen (D49)
+  onAnotherRandom?: () => void
+  randomBusy?: boolean
 }
 
 // Keyboard: Left / 1 = A, Right / 2 = B, E / = = Equal, Enter / Space = Next
@@ -38,7 +41,7 @@ const KEY_TO_GUESS: Record<string, Guess> = {
   '=': 'equal',
 }
 
-export function GameScreen({ sideA, sideB, onBack, onNewTeams }: Props) {
+export function GameScreen({ sideA, sideB, onBack, onNewTeams, onAnotherRandom, randomBusy = false }: Props) {
   const [state, dispatch] = useReducer(gameReducer, null, () => createGame(sideA.team.xi, sideB.team.xi))
   const [flying, setFlying] = useState(false)
   const [peek, setPeek] = useState(false)
@@ -106,6 +109,8 @@ export function GameScreen({ sideA, sideB, onBack, onNewTeams }: Props) {
         onBack={onBack}
         onPlayAgain={() => dispatch({ type: 'restart' })}
         onNewTeams={onNewTeams}
+        onAnotherRandom={onAnotherRandom}
+        randomBusy={randomBusy}
       />
     )
   }

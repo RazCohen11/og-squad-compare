@@ -140,6 +140,12 @@ def build_team(team, squad: pd.DataFrame) -> dict:
     }
 
 
+def xi_average(team_json: dict) -> float:
+    """Team strength for random matchups (D45): mean `ovr` of the Best XI, 2 decimals."""
+    xi = team_json["xi"]
+    return round(sum(p["ovr"] for p in xi) / len(xi), 2)
+
+
 def write_json(path: Path, data) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(data, ensure_ascii=False, separators=(",", ":"))
@@ -155,6 +161,8 @@ def main() -> None:
     squads = dict(tuple(players.groupby(["fifa_version", "club_team_id"])))
 
     versions_json = []
+    # One entry per team across all versions, for the random matchup mode
+    index_json = []
     for version in sorted(teams.fifa_version.unique()):
         tv = teams[teams.fifa_version == version].copy()
         tv["league_rank"] = tv.league_id.map(league_order)
@@ -167,6 +175,10 @@ def main() -> None:
         if len(snapshot) != 1:
             raise SystemExit(f"FIFA {version}: expected one snapshot date, got {snapshot}")
         size = write_json(OUT_DIR / str(version) / "teams.json", {"version": int(version), "teams": out_teams})
+        index_json.extend(
+            {"v": int(version), "id": t["id"], "name": t["name"], "leagueId": t["leagueId"], "xiAvg": xi_average(t)}
+            for t in out_teams
+        )
         versions_json.append({
             "id": int(version),
             "label": version_label(int(version)),
@@ -177,7 +189,9 @@ def main() -> None:
         print(f"{version_label(int(version)):>16}: {len(out_teams)} teams, {size / 1024:.1f} KB")
 
     write_json(OUT_DIR / "versions.json", versions_json)
-    print(f"Wrote {len(versions_json)} versions to {OUT_DIR.relative_to(ROOT)}")
+    index_size = write_json(OUT_DIR / "index.json", index_json)
+    print(f"Wrote {len(versions_json)} versions and index.json ({len(index_json)} teams, {index_size / 1024:.1f} KB) "
+          f"to {OUT_DIR.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":

@@ -1,5 +1,13 @@
 # Stage 07 report — Polish + deploy to GitHub Pages
 
+> **Update (stage 08, 01.10.2026): the site is live at https://razcohen11.github.io/og-squad-compare/**
+> (GitHub user `RazCohen11`). The user created the repository and pushed `master`. The first deploy failed: the
+> `github-pages` environment only allowed deployments from `main`, so the `deploy` job was rejected. The fix was
+> made by hand in **Settings → Environments → github-pages → Deployment branches and tags**, where `master` was
+> added as an allowed branch. After that, re-running the workflow succeeded (run attempt 3). If the default branch
+> or the environment is ever recreated, this policy must be set again. Verified on 01.10.2026: the site and
+> `data/versions.json` both return HTTP 200. The status below describes the state at the end of stage 07.
+
 ## Status
 
 **The site is not live yet.** The GitHub CLI (`gh`) is not installed on this machine. `gh` is not on `PATH` in

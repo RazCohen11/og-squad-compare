@@ -94,3 +94,13 @@ export interface TeamsFile {
   version: number
   teams: Team[]
 }
+
+// One entry of index.json: every team across all versions, for the random matchup mode (D45)
+export interface IndexEntry {
+  v: number
+  id: number
+  name: string
+  leagueId: number
+  // Mean `ovr` of the Best XI, 2 decimals
+  xiAvg: number
+}

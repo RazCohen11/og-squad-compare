@@ -1,4 +1,4 @@
-import type { TeamsFile, VersionInfo } from './types'
+import type { IndexEntry, TeamsFile, VersionInfo } from './types'
 
 // Error with a message that can be shown to the user as-is
 export class DataLoadError extends Error {
@@ -31,6 +31,7 @@ async function fetchJson<T>(path: string, what: string): Promise<T> {
 }
 
 let versionsCache: Promise<VersionInfo[]> | null = null
+let indexCache: Promise<IndexEntry[]> | null = null
 const teamsCache = new Map<number, Promise<TeamsFile>>()
 
 // Loads versions.json once; a failed load is not cached, so a retry fetches again
@@ -69,8 +70,26 @@ export function loadTeams(version: number): Promise<TeamsFile> {
   return request
 }
 
+// Loads index.json (all teams with their XI average) once; a failed load is not cached
+export function loadIndex(): Promise<IndexEntry[]> {
+  if (!indexCache) {
+    const request = fetchJson<IndexEntry[]>('index.json', 'the team index').then((index) => {
+      if (!Array.isArray(index) || index.length === 0) {
+        throw new DataLoadError('The team index is empty or malformed.')
+      }
+      return index
+    })
+    indexCache = request
+    request.catch(() => {
+      if (indexCache === request) indexCache = null
+    })
+  }
+  return indexCache
+}
+
 // Test helper: forget all cached requests
 export function clearDataCache(): void {
   versionsCache = null
+  indexCache = null
   teamsCache.clear()
 }

@@ -8,6 +8,9 @@ import { Footer } from './Footer'
 import styles from './SetupScreen.module.css'
 import { StatusMessage } from './StatusMessage'
 
+// State of the "Random matchup" button
+export type RandomState = { status: 'idle' } | { status: 'loading' } | { status: 'error'; message: string }
+
 export interface TeamPick {
   versionId: number | null
   teamId: number | null
@@ -22,6 +25,8 @@ interface Props {
   onPickAChange: (pick: TeamPick) => void
   onPickBChange: (pick: TeamPick) => void
   onStart: () => void
+  random: RandomState
+  onRandom: () => void
 }
 
 // The same club is blocked only when both sides use the same version (D30)
@@ -29,7 +34,9 @@ function isSameClub(a: TeamPick, b: TeamPick): boolean {
   return a.teamId !== null && a.teamId === b.teamId && a.versionId === b.versionId
 }
 
-export function SetupScreen({ versions, pickA, pickB, teamsA, teamsB, onPickAChange, onPickBChange, onStart }: Props) {
+export function SetupScreen(props: Props) {
+  const { versions, pickA, pickB, teamsA, teamsB, onPickAChange, onPickBChange, onStart, random, onRandom } = props
+  const randomHintId = useId()
   const canStart =
     teamsA.status === 'ready' &&
     teamsB.status === 'ready' &&
@@ -45,6 +52,29 @@ export function SetupScreen({ versions, pickA, pickB, teamsA, teamsB, onPickACha
           Pick two clubs, each from any game. Guess which player had the higher rating, slot by slot.
         </p>
       </header>
+
+      {/* Random matchup (D49): starts a game at once; manual picking below is unchanged */}
+      <section className={styles.random} aria-label="Random matchup">
+        <button
+          type="button"
+          className={styles.randomButton}
+          onClick={onRandom}
+          disabled={random.status === 'loading'}
+          aria-describedby={randomHintId}
+        >
+          <span aria-hidden="true">🎲</span> {random.status === 'loading' ? 'Picking a matchup…' : 'Random matchup'}
+        </button>
+        <p id={randomHintId} className={styles.randomHint}>
+          Two strong teams of a similar level, from any game.
+        </p>
+        {random.status === 'error' && (
+          <StatusMessage kind="error" message={random.message} onRetry={onRandom} inline />
+        )}
+      </section>
+
+      <p className={styles.divider}>
+        <span>or pick your own</span>
+      </p>
 
       <form
         className={styles.form}

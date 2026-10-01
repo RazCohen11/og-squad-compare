@@ -6,7 +6,7 @@ out on a 4-3-3 pitch. Slot by slot, you see both players with their ratings hidd
 Ultimate Team base rating, or whether they were equal. The card with the higher rating drops into the slot, and
 after 11 rounds you get your score and the combined XI.
 
-**Play it:** https://&lt;your-github-username&gt;.github.io/og-squad-compare/ *(filled in once the site is deployed)*
+**Play it:** https://razcohen11.github.io/og-squad-compare/
 
 Fan project: not affiliated with EA SPORTS. Ratings: SoFIFA data via Kaggle
 ([EA Sports FC 24 complete player dataset](https://www.kaggle.com/datasets/stefanoleone992/ea-sports-fc-24-complete-player-dataset)).

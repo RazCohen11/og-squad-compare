@@ -104,3 +104,58 @@
   border-radius: 50%;
   background: var(--team);
 }
+
+/* ---------- Random matchup (D49) ---------- */
+.random {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.randomButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.4rem;
+  border: 2px solid var(--accent);
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, #26402f 0%, #183020 100%);
+  color: var(--text);
+  font-size: 1.15rem;
+  font-weight: 800;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.randomButton:hover:not(:disabled) {
+  background: linear-gradient(160deg, #2e4b37 0%, #1d3a27 100%);
+}
+
+.randomButton:disabled {
+  opacity: 0.75;
+}
+
+.randomHint {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
