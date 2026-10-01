@@ -152,9 +152,18 @@ Screenshots: [setup with the button](08-screens/setup-random-button-375.png) and
 
 ## Deployment
 
-I committed and pushed to `master`, which redeploys the site. `gh` is still not installed on this machine, so I
-used the public GitHub REST API instead of `gh run watch` to follow the run, then checked the live URLs. The
-outcome is in the update section below.
+Commit `3247eee` was pushed to `master`.
+
+- `gh` is still not installed here, so instead of `gh run watch` I followed the workflow with the public GitHub
+  REST API, polling every 15 s.
+- Run [36875556520](https://github.com/RazCohen11/og-squad-compare/actions/runs/36875556520) finished with
+  **success** in about one minute.
+- Live checks: https://razcohen11.github.io/og-squad-compare/ → 200, `data/index.json` → 200 and
+  `data/versions.json` → 200.
+- **Live Playwright run:** the same random-game script played against the live URL passed **21/21**. Its games were
+  Sevilla · FIFA 22 vs Manchester United · FIFA 20, then Atlético Madrid · FIFA 17 vs Chelsea · FIFA 17, with no
+  failed requests and no console errors.
+- This report commit is pushed afterwards, which triggers one more deploy with documentation changes only.
 
 ## Open issues
 
