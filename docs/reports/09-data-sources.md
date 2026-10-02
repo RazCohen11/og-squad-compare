@@ -763,7 +763,7 @@ These are noted only; none was downloaded or checked.
 
 ```bash
 git clone https://github.com/kafagy/fifa-FUT-Data "data/raw/kafagy-fut"   # once
-pipeline/.venv/Scripts/python pipeline/explore_sources.py                    # about 30 s; rewrites the data sections
+pipeline/.venv/Scripts/python pipeline/explore_sources.py                    # about 10 s; rewrites the data sections
 ```
 
 ## Open issues
