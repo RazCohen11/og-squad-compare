@@ -20,6 +20,7 @@ from typing import Callable
 import pandas as pd
 
 from clubs_ea import EA_CLUBS
+from name_overrides import NAME_OVERRIDES
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "data" / "raw"
@@ -105,6 +106,17 @@ def ea_short_name(display: str, first: str | None = None, last: str | None = Non
         return f"{first.strip()[0]}. {last.strip()}"
     first_word, rest = display.split(" ", 1)
     return f"{first_word[0]}. {rest}"
+
+
+def apply_name_overrides(version: int, players: pd.DataFrame) -> pd.DataFrame:
+    """Replace rule-made short names with the manual fixes for this version (D59); fail on a stale entry."""
+    wanted = {pid: name for (v, pid), name in NAME_OVERRIDES.items() if v == version}
+    missing = sorted(set(wanted) - set(players.player_id))
+    if missing:
+        raise SystemExit(f"Version {version}: name overrides for unknown player ids {missing} (pipeline/name_overrides.py)")
+    players = players.copy()
+    players["short_name"] = [wanted.get(p, n) for p, n in zip(players.player_id, players.short_name)]
+    return players
 
 
 def _ea_frame(raw: pd.DataFrame, *, pid, short_name, long_name, nation, age, club, league, positions, overall,
@@ -238,7 +250,7 @@ def load_ea_fc25(version: int) -> VersionData:
         league=raw.League, positions=_positions(raw.Position, raw["Alternative positions"], ","), overall=raw.OVR,
         card_slots=["PAC", "SHO", "PAS", "DRI", "DEF", "PHY"], is_gk=raw.Position == "GK",
     )
-    return VersionData(players=players, teams=teams, snapshot_date=FC25_SNAPSHOT)
+    return VersionData(players=apply_name_overrides(version, players), teams=teams, snapshot_date=FC25_SNAPSHOT)
 
 
 # ---------------------------------------------------------------------- EA ratings: FC 27 (Kaggle, mikedpad)
@@ -278,7 +290,7 @@ def load_ea_fc27(version: int) -> VersionData:
         league=raw.league, positions=_positions(raw.position, raw.alternate_positions, " "), overall=raw.overall_rating,
         card_slots=["pace", "shooting", "passing", "dribbling", "defending", "physicality"], is_gk=raw.position == "GK",
     )
-    return VersionData(players=players, teams=teams, snapshot_date=snapshot[0])
+    return VersionData(players=apply_name_overrides(version, players), teams=teams, snapshot_date=snapshot[0])
 
 
 # ---------------------------------------------------------------------- version table

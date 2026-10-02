@@ -1,15 +1,21 @@
 # OG Squad Compare
 
 A single-player browser guessing game. Pick two clubs, each from any game between **FIFA 15** and
-**EA SPORTS FC 24** (for example, FC Barcelona FIFA 15 vs Real Madrid FIFA 17). Each club's best XI is laid
+**EA SPORTS FC 27** (for example, FC Barcelona FIFA 15 vs Real Madrid FIFA 17). Each club's best XI is laid
 out on a 4-3-3 pitch. Slot by slot, you see both players with their ratings hidden and guess who had the higher
 Ultimate Team base rating, or whether they were equal. The card with the higher rating drops into the slot, and
 after 11 rounds you get your score and the combined XI.
 
 **Play it:** https://razcohen11.github.io/og-squad-compare/
 
-Fan project: not affiliated with EA SPORTS. Ratings: SoFIFA data via Kaggle
-([EA Sports FC 24 complete player dataset](https://www.kaggle.com/datasets/stefanoleone992/ea-sports-fc-24-complete-player-dataset)).
+Fan project: not affiliated with EA SPORTS. Ratings: SoFIFA and EA SPORTS FC ratings data, via public Kaggle datasets:
+
+| Versions | Dataset | Source of the data |
+|---|---|---|
+| FIFA 15 – EA SPORTS FC 24 | [EA Sports FC 24 complete player dataset](https://www.kaggle.com/datasets/stefanoleone992/ea-sports-fc-24-complete-player-dataset) (stefanoleone992) | SoFIFA |
+| EA SPORTS FC 25 | [EA SPORTS FC 25 DATABASE, RATINGS AND STATS](https://www.kaggle.com/datasets/nyagami/ea-sports-fc-25-database-ratings-and-stats) (nyagami) | EA ratings site |
+| EA SPORTS FC 26 | [FC 26 (FIFA 26) Player Data](https://www.kaggle.com/datasets/rovnez/fc-26-fifa-26-player-data) (rovnez) | SoFIFA |
+| EA SPORTS FC 27 | [EA SPORTS FC 27 Player Ratings](https://www.kaggle.com/datasets/mikedpad/ea-sports-fc27-player-ratings) (mikedpad) | EA ratings API |
 
 ## Repository layout
 
@@ -25,8 +31,13 @@ docs/       Plan, decision log, stage prompts and reports
 
 You only need to do this to change the data. The generated JSON is already committed.
 
-1. Download the Kaggle dataset linked above (you need a Kaggle account). Put `male_players.csv` and
-   `male_teams.csv` into `data/raw/FIFA 15-24/`. The folder name includes the space.
+1. Download the Kaggle datasets linked above (you need a Kaggle account) into `data/raw/`:
+   - FIFA 15 – FC 24: `male_players.csv` and `male_teams.csv` into `data/raw/FIFA 15-24/` (the folder name
+     includes the space);
+   - FC 25: `male_players.csv` into `data/raw/FC 25/`;
+   - FC 26: `FC26_20250921.csv` into `data/raw/FC 26/`;
+   - FC 27: `players.csv` into `data/raw/FC 27/`.
+   `pipeline/sources.py` says which file serves which version.
 2. Create the Python environment (Python 3.11+):
 
    ```bash

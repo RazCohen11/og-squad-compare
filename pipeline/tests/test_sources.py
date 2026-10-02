@@ -155,3 +155,34 @@ def test_nation_aliases_resolve_to_known_nations():
 def test_new_nations_and_aliases(name, code, shown):
     assert nation_code(name) == code
     assert canonical_nation(name) == shown
+
+
+# ---------------------------------------------------------------------- name overrides (D59)
+def test_name_overrides_are_well_formed():
+    from name_overrides import NAME_OVERRIDES
+
+    assert NAME_OVERRIDES[(25, 200104)] == "Son"
+    for (version, player_id), name in NAME_OVERRIDES.items():
+        # Only the EA-format versions use the rule, so only they need fixes
+        assert version in (25, 27)
+        assert isinstance(player_id, int) and player_id > 0
+        assert name.strip() == name and name
+
+
+def test_stale_name_override_fails():
+    import pandas as pd
+
+    from sources import apply_name_overrides
+
+    players = pd.DataFrame({"player_id": [1, 2], "short_name": ["A. One", "B. Two"]})
+    with pytest.raises(SystemExit, match="unknown player ids"):
+        apply_name_overrides(25, players)
+
+
+@pytest.mark.skipif(not HAS_FC25, reason="FC 25 raw data not present")
+def test_fc25_loader_applies_overrides():
+    players = load_ea_fc25(25).players.set_index("player_id")
+    assert players.loc[200104].short_name == "Son"
+    assert players.loc[190149].short_name == "De Marcos"
+    # Untouched rule output
+    assert players.loc[231747].short_name == "K. Mbappé"
