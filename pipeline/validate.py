@@ -16,14 +16,18 @@ from nations import CODE_PATTERN
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "app" / "public" / "data"
 
-VERSIONS = list(range(15, 25))
+VERSIONS = list(range(15, 28))
+# Sources without an EA team sheet: eaPos and eaFormation are null there (stage 10)
+NO_TEAM_SHEET = {25, 27}
 LEAGUE_IDS = [13, 53, 31, 19, 16]
 
 # Expected clubs per league (stage 01 report, after D13)
 DEFAULT_COUNTS = {13: 20, 53: 20, 31: 20, 19: 18, 16: 20}
 EXPECTED_COUNTS = {v: dict(DEFAULT_COUNTS) for v in VERSIONS}
 EXPECTED_COUNTS[21][31] = 18  # Roma and Spezia excluded (D13)
-EXPECTED_COUNTS[24][16] = 18  # Ligue 1 had 18 clubs in 2023-24
+EXPECTED_COUNTS[24][16] = 18  # Ligue 1 has had 18 clubs since 2023-24
+for _v in (25, 26, 27):
+    EXPECTED_COUNTS[_v][16] = 18
 
 STATS_KEYS = {"pac", "sho", "pas", "dri", "def", "phy"}
 GK_KEYS = {"div", "han", "kic", "ref", "spd", "pos"}
@@ -80,7 +84,8 @@ def main() -> int:
             if t["id"] in team_ids:
                 err(f"{tw}: duplicate team id {t['id']}")
             team_ids.add(t["id"])
-            if not is_int(t.get("ovr")) or not is_int(t.get("leagueId")) or not isinstance(t.get("eaFormation"), str):
+            formation_ok = t.get("eaFormation") is None if v in NO_TEAM_SHEET else isinstance(t.get("eaFormation"), str)
+            if not is_int(t.get("ovr")) or not is_int(t.get("leagueId")) or not formation_ok:
                 err(f"{tw}: bad team fields")
             xi = t["xi"]
             if len(xi) != 11:
@@ -100,8 +105,9 @@ def main() -> int:
                     err(f"{pw}: id/age not integers")
                 if not is_int(p["ovr"]) or not 40 <= p["ovr"] <= 99:
                     err(f"{pw}: ovr {p['ovr']}")
-                if not p["name"] or not p["nation"] or not isinstance(p["eaPos"], str):
-                    err(f"{pw}: empty name/nation/eaPos")
+                ea_pos_ok = p["eaPos"] is None if v in NO_TEAM_SHEET else isinstance(p["eaPos"], str)
+                if not p["name"] or not p["nation"] or not ea_pos_ok:
+                    err(f"{pw}: empty name/nation or bad eaPos")
                 if not isinstance(p["nationCode"], str) or not CODE_PATTERN.match(p["nationCode"]):
                     err(f"{pw}: bad nationCode {p['nationCode']!r}")
                 positions = set(p["positions"])

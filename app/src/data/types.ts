@@ -63,7 +63,8 @@ interface PlayerBase {
   age: number
   positions: Position[]
   ovr: number
-  eaPos: EaPosition
+  // Null for versions whose source has no EA team sheet (FC 25, FC 27)
+  eaPos: EaPosition | null
   fit: Fit
 }
 
@@ -86,7 +87,8 @@ export interface Team {
   name: string
   leagueId: number
   ovr: number
-  eaFormation: string
+  // D-M-A of EA's starting XI; null when the source has no EA team sheet (FC 25, FC 27)
+  eaFormation: string | null
   xi: XiPlayer[]
 }
 

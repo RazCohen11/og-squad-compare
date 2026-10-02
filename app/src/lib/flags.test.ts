@@ -15,7 +15,8 @@ describe('flags (D39)', () => {
 
   it('has a flag for every nationCode in the generated data', () => {
     const files = Object.values(TEAM_FILES)
-    expect(files).toHaveLength(10)
+    // FIFA 15 - EA SPORTS FC 27
+    expect(files).toHaveLength(13)
     const missing = new Set<string>()
     for (const file of files) {
       for (const team of file.teams) {

@@ -2,7 +2,8 @@
 
 Codes are lowercase ISO 3166-1 alpha-2, matching the file names of the `flag-icons` package, plus its
 non-ISO extras: the UK home nations (gb-eng, gb-sct, gb-wls, gb-nir) and Kosovo (xk).
-The table covers every nation that appears in any top-5 league squad in FIFA 15 - FC 24.
+The table covers every nation that appears in any top-5 league squad in FIFA 15 - FC 27; other spellings
+used by the newer sources are listed in NATION_ALIASES.
 """
 
 import re
@@ -72,6 +73,7 @@ NATION_CODES: dict[str, str] = {
     "Honduras": "hn",
     "Hungary": "hu",
     "Iceland": "is",
+    "Indonesia": "id",
     "Iran": "ir",
     "Iraq": "iq",
     "Israel": "il",
@@ -93,6 +95,7 @@ NATION_CODES: dict[str, str] = {
     "Macau": "mo",
     "Madagascar": "mg",
     "Mali": "ml",
+    "Malaysia": "my",
     "Malta": "mt",
     "Mauritania": "mr",
     "Mexico": "mx",
@@ -121,6 +124,7 @@ NATION_CODES: dict[str, str] = {
     "Romania": "ro",
     "Russia": "ru",
     "Saint Kitts and Nevis": "kn",
+    "Saudi Arabia": "sa",
     "Scotland": "gb-sct",
     "Senegal": "sn",
     "Serbia": "rs",
@@ -151,6 +155,16 @@ NATION_CODES: dict[str, str] = {
     "Zimbabwe": "zw",
 }
 
+# Other spellings of the same nation in other sources (EA ratings data, newer SoFIFA exports) -> the name above.
+# The canonical name is what the app shows, so a nation reads the same in every version.
+NATION_ALIASES: dict[str, str] = {
+    "Holland": "Netherlands",
+    "Türkiye": "Turkey",
+    "Czechia": "Czech Republic",
+    "Cabo Verde": "Cape Verde Islands",
+    "Guinea-Bissau": "Guinea Bissau",
+}
+
 CODE_PATTERN = re.compile(r"^(?:[a-z]{2}|gb-(?:eng|sct|wls|nir))$")
 
 
@@ -158,8 +172,13 @@ class UnknownNationError(KeyError):
     """Raised when a nation has no flag code in NATION_CODES."""
 
 
+def canonical_nation(nation: str) -> str:
+    """The display name of a nation: aliases resolve to the name used in NATION_CODES."""
+    return NATION_ALIASES.get(nation, nation)
+
+
 def nation_code(nation: str) -> str:
     try:
-        return NATION_CODES[nation]
+        return NATION_CODES[canonical_nation(nation)]
     except KeyError:
         raise UnknownNationError(f"No flag code for nation {nation!r}; add it to pipeline/nations.py") from None

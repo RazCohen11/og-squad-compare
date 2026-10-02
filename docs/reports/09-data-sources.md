@@ -635,7 +635,7 @@ Hand-written after reviewing the tables above and a few one-off checks, which ar
 | `nation` / `nationCode` | 97.7% in `nations.py`; add Holland, Indonesia, Saudi Arabia, Guinea-Bissau | 98.4%; add Türkiye, Czechia, Cabo Verde, Guinea-Bissau, Indonesia, Saudi Arabia, Malaysia | 97.0%; same additions as FC 25 |
 | `age` | `Age` | `age` | from `birthdate` and the release date |
 | `positions` | `Position` + `Alternative positions` | `player_positions` | `position` + `alternate_positions` |
-| `stats` / `gk` | all present; GK speed = the GK's `PAC` (assumed, not verified) | all present, incl. `goalkeeping_speed` | all present; GK speed = the GK's `pace` (assumed) |
+| `stats` / `gk` | all present; GK speed = the GK's `PAC` (assumed, not verified; **corrected in stage 10: speed is the `DEF` slot**) | all present, incl. `goalkeeping_speed` | all present; GK speed = the GK's `pace` (assumed; **corrected in stage 10: the `defending` slot**) |
 | `eaPos`, `eaFormation`, EA-XI tie-break | **missing** (no EA team sheet) | present (`club_position`) | **missing** |
 | team `ovr` (sorting) | missing; use the XI average | `male_teams` not in the download; use the XI average | missing; use the XI average |
 
